@@ -6,13 +6,13 @@ char oToken;
 char vertical = '|';
 char horizontal = '-';
 
-class Board{
+class Board {
 public:
     const static int rows = 5;
     const static int cols = 5;
     char grid[rows][cols]{};
 
-    Board(){
+    Board() {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 if (j == 1 || j == 3) {
@@ -37,16 +37,18 @@ public:
 
     void play() {
         printBoard();
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                if (Board().grid[i][j] != vertical && Board().grid[i][j] != horizontal) {
-                    cin >> grid[i][j];
-                }
+        int i = 0;
+        int j = 0;
+        while(i < rows && j < cols){
+            i++;
+            j++;
+            if (Board().grid[i][j] != vertical && Board().grid[i][j] != horizontal) {
+                cin >> grid[i][j];
+                printBoard();
             }
-            printBoard();
         }
-    }
-};
+        }
+    };
 
 
 int main() {
