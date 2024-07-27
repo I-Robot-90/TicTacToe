@@ -1,32 +1,37 @@
 #include <iostream>
+
 using namespace std;
 
-char xToken;
-char oToken;
+char xToken = 'x';
+char oToken = 'o';
 char vertical = '|';
 char horizontal = '-';
 
 class Board {
 public:
-    const static int rows = 5;
-    const static int cols = 5;
+    const static int rows = 6;
+    const static int cols = 6;
     char grid[rows][cols]{};
 
     Board() {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
-                if (j == 1 || j == 3) {
-                    grid[i][j] = vertical;
-                }
+                grid[i][0] = '0' + i;
+                grid[0][j] = '0' + j;
 
-                if (i == 1 || i == 3) {
-                    grid[i][j] = horizontal;
+                if (j == 2 || j == 4) {
+                        grid[i][j] = vertical;
+                    }
+
+                    if (i == 2 || i == 4) {
+                        grid[i][j] = horizontal;
                 }
             }
         }
     }
 
     void printBoard() {
+
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 cout << grid[i][j] << "\t";
@@ -39,20 +44,24 @@ public:
         printBoard();
         int i = 0;
         int j = 0;
-        while(i < rows && j < cols){
-            i++;
-            j++;
+
+        cout << "choose index you want to play in" << endl;
+        cin >> i;
+        cout << ",";
+        cin >> j;
+        cout << i << ", " << j << endl;
+
             if (Board().grid[i][j] != vertical && Board().grid[i][j] != horizontal) {
-                cin >> grid[i][j];
+                grid[i][j] = xToken;
                 printBoard();
             }
-        }
-        }
-    };
+    }
+};
 
 
 int main() {
     cout << "Let's play a game of Xs & Os" << endl;
+    cout << endl;
     Board().play();
     return 0;
     }
