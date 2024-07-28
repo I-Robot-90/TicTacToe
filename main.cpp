@@ -20,48 +20,81 @@ public:
                 grid[0][j] = '0' + j;
 
                 if (j == 2 || j == 4) {
-                        grid[i][j] = vertical;
-                    }
+                    grid[i][j] = vertical;
+                }
 
-                    if (i == 2 || i == 4) {
-                        grid[i][j] = horizontal;
+                if (i == 2 || i == 4) {
+                    grid[i][j] = horizontal;
                 }
             }
         }
     }
 
     void printBoard() {
-
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                cout << grid[i][j] << "\t";
+        for (auto & i : grid) {
+            for (char j : i) {
+                cout << j << "\t";
             }
             cout << endl;
         }
     }
 
-    void play() {
-        printBoard();
-        int i = 0;
-        int j = 0;
-
+    char xPlay(int &i, int &j) {
         cout << "choose index you want to play in" << endl;
+        cout << "Player 1" << endl;
+        cout << "Row: " << endl;
         cin >> i;
-        cout << ",";
+        cout << "Column: " << endl;
+        cin >> j;
+        cout << i << ", " << j << endl;
+        if (grid[i][j] == vertical || grid[i][j] == horizontal) {
+            cout << "Please select an index from 1, 3 and 5" << endl;
+            xPlay(i, j);
+        }
+
+       return grid[i][j] = xToken;
+    }
+
+    char oPlay(int &i, int &j) {
+        cout << "choose index you want to play in" << endl;
+        cout << "Player 2" << endl;
+        cout << "Row: " << endl;
+        cin >> i;
+        cout << "Column: " << endl;
         cin >> j;
         cout << i << ", " << j << endl;
 
-            if (Board().grid[i][j] != vertical && Board().grid[i][j] != horizontal) {
-                grid[i][j] = xToken;
-                printBoard();
-            }
+        if (grid[i][j] == vertical || grid[i][j] == horizontal) {
+            cout << "Please select an index from 1, 3 and 5" << endl;
+            oPlay(i, j);
+        }
+
+           return grid[i][j] = oToken;
+    }
+
+    void play() {
+        int i;
+        int j;
+
+        xPlay(i, j);
+        printBoard();
+
+        oPlay(i, j);
+        printBoard();
+
+
+        if(grid[1][1] == grid[3][3]) {
+            cout << "You Win!" << endl;
+        }
+        else
+            play();
     }
 };
 
-
-int main() {
-    cout << "Let's play a game of Xs & Os" << endl;
-    cout << endl;
-    Board().play();
-    return 0;
+    int main() {
+        cout << "Let's play a game of Xs & Os" << endl;
+        Board().printBoard();
+        cout << endl;
+        Board().play();
+        return 0;
     }
