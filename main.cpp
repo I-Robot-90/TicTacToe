@@ -2,60 +2,50 @@
 
 using namespace std;
 
-char xToken = 'x';
-char oToken = 'o';
-char vertical = '|';
-char horizontal = '-';
 
-class Board {
+
+class IBoard{
 public:
-    const static int rows = 6;
-    const static int cols = 6;
+    const static int rows = 3;
+    const static int cols = 3;
     char grid[rows][cols]{};
+    char token = ' ';
 
-    Board() {
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                grid[i][0] = '0' + i;
-                grid[0][j] = '0' + j;
+    void printBoard();
 
-                if (j == 2 || j == 4) {
-                    grid[i][j] = vertical;
-                }
+    char xPlay(int &i, int &j);
 
-                if (i == 2 || i == 4) {
-                    grid[i][j] = horizontal;
-                }
-            }
-        }
+    char oPlay(int &i, int &j);
+
+    void play();
+
+    bool threeRCD(char& beeToken);
+};
+
+class Board : public IBoard{
+};
+
+char IBoard::xPlay(int &i, int &j) {
+    token = 'x';
+    cout << "choose index you want to play in" << endl;
+    cout << "Player 1" << endl;
+    cout << "Row: " << endl;
+    cin >> i;
+    cout << "Column: " << endl;
+    cin >> j;
+    cout << i << ", " << j << endl;
+
+    if (i > 3 || j > 3) {
+        cout << "Please choose an index between 1, 2 and 3" << endl;
+        xPlay(i, j);
     }
 
-    void printBoard() {
-        for (auto & i : grid) {
-            for (char j : i) {
-                cout << j << "\t";
-            }
-            cout << endl;
-        }
-    }
+    return grid[i - 1][j - 1] = token;
 
-    char xPlay(int &i, int &j) {
-        cout << "choose index you want to play in" << endl;
-        cout << "Player 1" << endl;
-        cout << "Row: " << endl;
-        cin >> i;
-        cout << "Column: " << endl;
-        cin >> j;
-        cout << i << ", " << j << endl;
-        if (grid[i][j] == vertical || grid[i][j] == horizontal) {
-            cout << "Please select an index from 1, 3 and 5" << endl;
-            xPlay(i, j);
-        }
+}
 
-       return grid[i][j] = xToken;
-    }
-
-    char oPlay(int &i, int &j) {
+char IBoard::oPlay(int &i, int &j) {
+        token = 'o';
         cout << "choose index you want to play in" << endl;
         cout << "Player 2" << endl;
         cout << "Row: " << endl;
@@ -64,37 +54,58 @@ public:
         cin >> j;
         cout << i << ", " << j << endl;
 
-        if (grid[i][j] == vertical || grid[i][j] == horizontal) {
-            cout << "Please select an index from 1, 3 and 5" << endl;
+        if (i > 3 || j > 3) {
+            cout << "Please choose an index between 1, 2 and 3" << endl;
             oPlay(i, j);
         }
 
-           return grid[i][j] = oToken;
-    }
+        return grid[i - 1][j - 1] = token;
+}
 
-    void play() {
-        int i;
-        int j;
-
-        xPlay(i, j);
-        printBoard();
-
-        oPlay(i, j);
-        printBoard();
-
-
-        if(grid[1][1] == grid[3][3]) {
-            cout << "You Win!" << endl;
+void IBoard::printBoard() {
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            cout << grid[i][j];
+            if (j < cols - 1)
+                cout << " |     ";
         }
-        else
-            play();
-    }
-};
-
-    int main() {
-        cout << "Let's play a game of Xs & Os" << endl;
-        Board().printBoard();
         cout << endl;
-        Board().play();
+        if (i < rows - 1)
+            cout << "- - - - - - -" << endl;
+    }
+}
+
+
+void IBoard::play() {
+    int row;
+    int col;
+    char newToken;
+
+    xPlay(row, col);
+    printBoard();
+
+    oPlay(row, col);
+    printBoard();
+
+    threeRCD(newToken);
+
+}
+
+bool IBoard::threeRCD(char& token) {
+    if (token == 'x' && ((grid[0][0] == token) && (grid[1][1] == token) && (grid[2][2]== token)) ||
+    token == 'o' && (grid[0][0] == token) && (grid[1][1] == token) && (grid[2][2] == token)){
+        return true;
+    }
+    play();
+    return false;
+}
+
+
+int main() {
+        cout << "Let's play a game of Xs & Os" << endl;
+        Board board;
+        board.printBoard();
+        cout << endl;
+        board.play();
         return 0;
     }
