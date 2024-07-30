@@ -9,24 +9,73 @@ public:
     const static int rows = 3;
     const static int cols = 3;
     char grid[rows][cols]{};
-    char token = ' ';
+    pair<char, int> token;
 
-    void printBoard();
+    int printBoard();
 
-    char xPlay(int &i, int &j);
+    int xPlay(int &i, int &j);
 
-    char oPlay(int &i, int &j);
+    int oPlay(int &i, int &j);
 
     void play();
 
-    bool threeRCD(char& beeToken);
+    pair<bool, bool> is_winner() {
+        int sumb = 0;
+        int sumd = 0;
+
+        for(int i = 0; i != 3; ++i){
+            int row_sum = 0;
+            int col_sum = 0;
+
+            for(int j = 0; j != 3; j++){
+                row_sum += grid[3 * i][ j];
+                col_sum += grid[3 * j][i];
+
+                if(row_sum == -3 || col_sum == -3){
+                    return {true, false};
+                }
+                if(row_sum == 3 || col_sum == 3){
+                    return {false, true};
+                }
+
+                sumb += grid[i][i];
+                sumd += grid[i][2 - i];
+            }
+
+        }
+        if(sumb == -3 || sumd == -3){
+            return {true, false};
+        }
+        if(sumb == 3 || sumd == 3){
+            return {false, true};
+        }
+        return {false, false};
+    }
+
+    void Check();
 };
 
 class Board : public IBoard{
 };
 
-char IBoard::xPlay(int &i, int &j) {
-    token = 'x';
+
+int IBoard::printBoard() {
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            cout << grid[i][j];
+            if (j < cols - 1)
+                cout << " |     ";
+        }
+        cout << endl;
+        if (i < rows - 1)
+            cout << "- - - - - - - - - -" << endl;
+    }
+    return grid[rows - 1][cols - 1];
+}
+
+int IBoard::xPlay(int &i, int &j) {
+    token.first = 'x';
+    token.second = 1;
     cout << "choose index you want to play in" << endl;
     cout << "Player 1" << endl;
     cout << "Row: " << endl;
@@ -40,12 +89,14 @@ char IBoard::xPlay(int &i, int &j) {
         xPlay(i, j);
     }
 
-    return grid[i - 1][j - 1] = token;
-
+    //is_winner();
+    grid[i - 1][j - 1] = token.first;
+    return printBoard();
 }
 
-char IBoard::oPlay(int &i, int &j) {
-        token = 'o';
+int IBoard::oPlay(int &i, int &j) {
+        token.first = 'o';
+        token.second = -1;
         cout << "choose index you want to play in" << endl;
         cout << "Player 2" << endl;
         cout << "Row: " << endl;
@@ -58,47 +109,37 @@ char IBoard::oPlay(int &i, int &j) {
             cout << "Please choose an index between 1, 2 and 3" << endl;
             oPlay(i, j);
         }
-
-        return grid[i - 1][j - 1] = token;
-}
-
-void IBoard::printBoard() {
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < cols; j++) {
-            cout << grid[i][j];
-            if (j < cols - 1)
-                cout << " |     ";
-        }
-        cout << endl;
-        if (i < rows - 1)
-            cout << "- - - - - - -" << endl;
-    }
+        //is_winner();
+    grid[i - 1][j - 1] = token.first;
+        return printBoard();
 }
 
 
 void IBoard::play() {
     int row;
     int col;
-    char newToken;
 
     xPlay(row, col);
-    printBoard();
 
     oPlay(row, col);
-    printBoard();
+    //printBoard();
 
-    threeRCD(newToken);
-
+    Check();
 }
 
-bool IBoard::threeRCD(char& token) {
-    if (token == 'x' && ((grid[0][0] == token) && (grid[1][1] == token) && (grid[2][2]== token)) ||
-    token == 'o' && (grid[0][0] == token) && (grid[1][1] == token) && (grid[2][2] == token)){
-        return true;
+void IBoard::Check() {
+    if(is_winner().first){
+        cout << "Player 1 Wins!" << endl;
     }
-    play();
-    return false;
+    else if (is_winner().second){
+        cout << "Player 2 Wins!" << endl;
+    }
+    else{
+        play();
+    }
 }
+
+
 
 
 int main() {
