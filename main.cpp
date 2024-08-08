@@ -3,7 +3,6 @@
 using namespace std;
 
 
-
 class IBoard{
 public:
     const static int rows = 3;
@@ -17,14 +16,13 @@ public:
 
     int oPlay(int &i, int &j);
 
-    void play();
+    int play();
 
     bool is_winner(int token);
 };
 
 class Board : public IBoard{
 };
-
 
 int IBoard::printBoard() {
     for (int i = 0; i < rows; ++i) {
@@ -81,35 +79,39 @@ if (i > 3 || j > 3) {
     return token.second;
 }
 
-
-void IBoard::play() {
+int IBoard::play() {
     int row;
     int col;
 
-        xPlay(row, col);
-        oPlay(row, col);
-    if(!is_winner(token.second)){
+    xPlay(row, col);
+    oPlay(row, col);
+    if (is_winner(xPlay(row, col))){
+        cout << "Player 1 wins!" << endl;
+        return 0;
+    } else
+    if (is_winner(oPlay(row, col))){
+        cout << "Player 2 wins!" << endl;
+        return 0;
+    }
+    if(!is_winner(xPlay(row, col)) && !is_winner(oPlay(row, col))){
         play();
     }
-    cout << "PLayer wins!" << endl;
+       return -1;
 }
 
 bool IBoard::is_winner(int tokenVal) {
+    int row_sum = 0;
+    int col_sum = 0;
     int sumb = 0;
     int sumd = 0;
-    for(int i = 0; i != 3; ++i){
-        int row_sum[3];
-        int col_sum[3];
-
-
-        for(int j = 0; j != 3; j++){
-            row_sum[i] += grid[i][j];
-            col_sum[j] += grid[i][j];
-            if(row_sum[i] == -3 * tokenVal || col_sum[j] == - 3 * tokenVal){
+    for(int i = 0; i < 3; ++i){
+        for(int j = 0; j < 3; j++){
+            row_sum += grid[i][j];
+            col_sum += grid[j][i];
+            if(row_sum == -3 * tokenVal || col_sum == -3 * tokenVal){
 //              return {true, false};
                 return true;
-            }
-            if(row_sum[i] == 3 * tokenVal || col_sum[j] == 3 * tokenVal){
+            } if(row_sum == 3 * tokenVal || col_sum == 3 * tokenVal){
 //                return {false, true};
                 return true;
             }
@@ -128,7 +130,6 @@ bool IBoard::is_winner(int tokenVal) {
 //    return {true, false};
     return false;
 }
-
 
 int main() {
     cout << "Let's play a game of Xs & Os" << endl;
