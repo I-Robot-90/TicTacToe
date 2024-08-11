@@ -2,12 +2,11 @@
 
 using namespace std;
 
-
 class IBoard{
 public:
     const static int rows = 3;
     const static int cols = 3;
-    int grid[rows][cols]{};
+    pair<char, int> grid[rows][cols]{};
     pair<char, int> token;
 
     int printBoard();
@@ -27,7 +26,7 @@ class Board : public IBoard{
 int IBoard::printBoard() {
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
-            cout << grid[i][j];
+            cout << grid[i][j].first;
             if (j < cols - 1)
                 cout << " |     ";
         }
@@ -35,7 +34,7 @@ int IBoard::printBoard() {
         if (i < rows - 1)
             cout << "- - - - - - - - - -" << endl;
     }
-    return grid[rows - 1][cols - 1];
+    return grid[rows - 1][cols - 1].second;
 }
 
 int IBoard::xPlay(int &i, int &j) {
@@ -48,14 +47,19 @@ int IBoard::xPlay(int &i, int &j) {
     cout << "Column: " << endl;
     cin >> j;
     cout << i << ", " << j << endl;
-    grid[i - 1][j - 1] = token.second;
+    grid[i - 1][j - 1].first = token.first;
+    grid[i - 1][j - 1].second = token.second;
     printBoard();
+
 
     if (i > 3 || j > 3) {
         cout << "Please choose an index between 1, 2 and 3" << endl;
         xPlay(i, j);
     }
-
+//    if (grid[i - 1][j - 1].second == oPlay(i, j)){
+//        cout << "Please enter another cell" << endl;
+//        xPlay(i, j);
+//    }
     return token.second;
 }
 
@@ -69,7 +73,8 @@ int IBoard::oPlay(int &i, int &j) {
         cout << "Column: " << endl;
         cin >> j;
         cout << i << ", " << j << endl;
-        grid[i - 1][j - 1] = token.second;
+        grid[i - 1][j - 1].first = token.first;
+        grid[i - 1][j - 1].second = token.second;
         printBoard();
 
 if (i > 3 || j > 3) {
@@ -87,13 +92,12 @@ int IBoard::play() {
     oPlay(row, col);
     if (is_winner(xPlay(row, col))){
         cout << "Player 1 wins!" << endl;
-        return 0;
+        //return 0;
     } else
     if (is_winner(oPlay(row, col))){
         cout << "Player 2 wins!" << endl;
-        return 0;
-    }
-    if(!is_winner(xPlay(row, col)) && !is_winner(oPlay(row, col))){
+        //return 0;
+    }if(!is_winner(xPlay(row, col)) && !is_winner(oPlay(row, col))){
         play();
     }
        return -1;
@@ -106,28 +110,28 @@ bool IBoard::is_winner(int tokenVal) {
     int sumd = 0;
     for(int i = 0; i < 3; ++i){
         for(int j = 0; j < 3; j++){
-            row_sum += grid[i][j];
-            col_sum += grid[j][i];
-            if(row_sum == -3 * tokenVal || col_sum == -3 * tokenVal){
-//              return {true, false};
-                return true;
-            } if(row_sum == 3 * tokenVal || col_sum == 3 * tokenVal){
-//                return {false, true};
+            row_sum += grid[i][j].second;
+            col_sum += grid[j][i].second;
+            if(row_sum == 3 * tokenVal || col_sum == 3 * tokenVal){
+                if(tokenVal == 1){
+                    cout << "Player 1 wins!" << endl;
+                } else if (tokenVal == -1){
+                    cout << "Player 2 wins!" << endl;
+                }
                 return true;
             }
         }
-        sumb += grid[i][i];
-        sumd += grid[i][2 - i];
-        if(sumb == -3 * tokenVal || sumd == -3 * tokenVal){
-//        return {true, false};
-            return true;
-        }
+        sumb += grid[i][i].second;
+        sumd += grid[i][2 - i].second;
         if(sumb == 3 * tokenVal || sumd == 3 * tokenVal){
-//        return {false, true};
+            if(tokenVal == 1){
+                cout << "Player 1 wins!" << endl;
+            } else if (tokenVal == -1){
+               cout << "Player 2 wins!" << endl;
+            }
             return true;
         }
     }
-//    return {true, false};
     return false;
 }
 
